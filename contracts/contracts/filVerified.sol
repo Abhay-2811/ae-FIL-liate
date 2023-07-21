@@ -1,17 +1,6 @@
-//
-// Copyright 2017 Christian Reitwiessner
-// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-// 2019 OKIMS
-//      ported to solidity 0.6
-//      fixed linter warnings
-//      added requiere error messages
-//
-//
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.6.11;
+pragma solidity ^0.8.0;
+
 library Pairing {
     struct G1Point {
         uint X;
@@ -35,16 +24,6 @@ library Pairing {
             [4082367875863433681332203403145435568316851327593401208105741076214120093531,
              8495653923123431417604973247489272438418190587263600148770280649306958101930]
         );
-
-/*
-        // Changed by Jordi point
-        return G2Point(
-            [10857046999023057135944570762232829481370756359578518086990519993285655852781,
-             11559732032986387107991004021392285783925812861821192530917403151452391805634],
-            [8495653923123431417604973247489272438418190587263600148770280649306958101930,
-             4082367875863433681332203403145435568316851327593401208105741076214120093531]
-        );
-*/
     }
     /// @return r the negation of p, i.e. p.addition(p.negate()) should be zero.
     function negate(G1Point memory p) internal pure returns (G1Point memory r) {
@@ -161,8 +140,10 @@ library Pairing {
         return pairing(p1, p2);
     }
 }
-contract Verifier {
+contract filVerification {
+
     using Pairing for *;
+
     struct VerifyingKey {
         Pairing.G1Point alfa1;
         Pairing.G2Point beta2;
@@ -237,7 +218,7 @@ contract Verifier {
             uint[2][2] memory b,
             uint[2] memory c,
             uint[1] memory input
-        ) public view returns (bool r) {
+        ) internal view returns (bool r) {
         Proof memory proof;
         proof.A = Pairing.G1Point(a[0], a[1]);
         proof.B = Pairing.G2Point([b[0][0], b[0][1]], [b[1][0], b[1][1]]);
@@ -252,4 +233,20 @@ contract Verifier {
             return false;
         }
     }
+
+    address[] public filVerified;
+
+    event verifiedUser(address indexed  user, uint indexed blocknumber, Proof indexed zkProof);
+
+    function getFilVerified(uint[2] memory a,
+            uint[2][2] memory b,
+            uint[2] memory c,
+            uint[1] memory input) public payable{
+        require(verifyProof(a, b, c, input),"ZK proof not valid");
+        require(msg.value >= 1 ether, "Send 1 FIL, use exact value");
+        filVerified.push(msg.sender);
+        emit verifiedUser(msg.sender, block.number, Proof(Pairing.G1Point(a[0],a[1]),Pairing.G2Point(b[0],b[1]),Pairing.G1Point(c[0],c[1])));
+    }
+
+
 }
