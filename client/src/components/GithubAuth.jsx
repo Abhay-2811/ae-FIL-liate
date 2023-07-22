@@ -3,10 +3,13 @@ import { useState } from 'react'
 import { GitHubAuthPopUp } from './GitHubAuthPopUp'
 // import {ReactComponent as GithubLogo} from "../assets/github.svg "
 import githublogo from "../assets/icons8-github-256.png"
+import axios from "axios"
 
 export const GithubAuth = (props) => {
   const [popUp, setPopUp] = useState(false)
   const [githubCodeParam, setGithubCodeParam] = useState('')
+  const [bizAge, setBizAge] = useState(0)
+  const [gitHubVerified, setIsGitHubVerified] = useState(false)
 
   const GITHUB_CLIENT_ID = "675b2b0ff4c699527a21"
   const REDIRECT_URI = "http://localhost:3000/verify"
@@ -20,11 +23,31 @@ export const GithubAuth = (props) => {
     const queryString = window.location.search
     const urlParams = new URLSearchParams(queryString)
     // const codeParam = urlParams.get("code")
-    setGithubCodeParam(urlParams?.get("code"))
-    props.handleGithubAuth(true)
-  },[])
- 
-  console.log(githubCodeParam);
+    console.log(`url : ${urlParams.get('code')}`);
+    setGithubCodeParam(urlParams?.get('code'))
+    
+    console.log(`state: ${githubCodeParam}`);
+
+    let config = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `https://fine-rose-pronghorn-gear.cyclic.app/callback?code=${githubCodeParam}`,
+      headers: {
+       }
+    };
+    
+    axios.request(config)
+    .then((response) => {
+      console.log(JSON.stringify(response.data));
+      setBizAge(response?.data.age)
+      setIsGitHubVerified(response?.data.isVerified)
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+
+  },[githubCodeParam])
+  
 
   const togglePopup = () => {
     setPopUp(!popUp);
