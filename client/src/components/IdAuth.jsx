@@ -5,12 +5,14 @@ import idlogo from "../assets/id-card1.png"
 
 export const IdAuth = () => {
   const [popUp, setPopUp] = useState(false)
+  const [isVerified, setIsVerified] = useState(false)
 
   const togglePopup = () => {
     setPopUp(!popUp);
   }
 
   console.log(popUp)
+  console.log(`is verified ID : ${isVerified}`)
 
   return (
     <div class="flex flex-col justify-center items-center w-80 h-96 border-2 hover:bg-sky-500 gap-12 p-12">
@@ -24,7 +26,7 @@ export const IdAuth = () => {
       onClick={togglePopup}
       />
       {/* <button class="w-48 border-2 border-slate-900 hover:bg-white">Verify ID</button> */}
-      {popUp && <IdAuthPopUp handleClose={togglePopup}/>}
+      {popUp && <IdAuthPopUp handleClose={togglePopup} handleVerify={setIsVerified}/>}
     </div>
   )
 }
