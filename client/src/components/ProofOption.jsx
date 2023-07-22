@@ -3,17 +3,15 @@ import { Rings } from '@agney/react-loading'
 
 import zkicon from '../assets/argument (1).png'
 import axios from 'axios'
-import { createWalletClient, custom, http, createPublicClient, parseEther } from 'viem'
+import { createWalletClient, custom, parseEther } from 'viem'
 import { filecoinCalibration } from 'viem/chains'
-import { abi, bytecode, address } from '../contract/filVerified'
+import { abi, address } from '../contract/filVerified'
 
 export const ProofOption = props => {
 
   const gitAcc = 190
   const bizData = 3
   const [Proof, setProof] = useState()
-  const [loading, setLoading] = useState(false)
-  const [isProofGenerated, setIsProofGenerated] = useState(false)
 
   const getZkProof = async (git, biz) => {
     let headersList = {
@@ -34,7 +32,8 @@ export const ProofOption = props => {
 
     let response = await axios.request(reqOptions)
     console.log((response.data));
-    setProof(response.data)
+
+    return response.data
   }
 
   const walletClient = createWalletClient({
@@ -42,12 +41,7 @@ export const ProofOption = props => {
     transport: custom(window.ethereum)
   })
 
-  const publicClient = createPublicClient({
-    chain: filecoinCalibration,
-    transport: http()
-  })
-
-  const interactChain = async () => {
+  const interactChain = async (proof) => {
     const [account] = await walletClient.getAddresses()
     console.log(Proof);
     await walletClient.writeContract({
@@ -55,16 +49,22 @@ export const ProofOption = props => {
       address: address,
       abi: abi,
       functionName: 'getFilVerified',
-      args:Proof,
+      args:proof,
       value: parseEther('1')
     });
 
   }
 
   const handleClick = async () => {
-    await getZkProof(gitAcc, bizData).then(async ()=>{
-      await interactChain();
-    });
+    try {
+      await getZkProof(gitAcc, bizData).then(async (proof)=>{
+        await interactChain(proof);
+      });
+
+    } catch (error) {
+      console.log(error);
+      alert(error)
+    }
     
   }
 
