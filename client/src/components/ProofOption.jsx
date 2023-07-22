@@ -30,7 +30,8 @@ export const ProofOption = props => {
 
     let response = await axios.request(reqOptions)
     console.log((response.data));
-    setProof(response.data)
+
+    return response.data
   }
 
   const walletClient = createWalletClient({
@@ -43,7 +44,7 @@ export const ProofOption = props => {
     transport: http()
   })
 
-  const interactChain = async () => {
+  const interactChain = async (proof) => {
     const [account] = await walletClient.getAddresses()
     console.log(Proof);
     await walletClient.writeContract({
@@ -51,16 +52,23 @@ export const ProofOption = props => {
       address: address,
       abi: abi,
       functionName: 'getFilVerified',
-      args:Proof,
+      args:proof,
       value: parseEther('1')
     });
 
   }
 
   const handleClick = async () => {
-    await getZkProof(gitAcc, bizData).then(async ()=>{
-      await interactChain();
-    });
+    try {
+      await getZkProof(gitAcc, bizData).then(async (proof)=>{
+        await interactChain(proof);
+      });
+      
+    } catch (error) {
+      console.log(error);
+      alert(error)
+    }
+    
     
   }
 
