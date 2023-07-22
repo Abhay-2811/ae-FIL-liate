@@ -10,11 +10,15 @@ import { ProofOption } from './ProofOption'
 export const Verify = () => {
 
   const [generateProofPopup, setGenerateProofPopup] = useState(false)
+  const [isGithubVerified, setIsGithubVerified] = useState(false)
+  const [isIdVerified, setIsIdVerified] = useState(false)
+  const [isBusinessVerified, setIsBusinessVerified] = useState(false)
 
   const toggleZKPopup = () => {
     setGenerateProofPopup(!generateProofPopup)
   }
   console.log(generateProofPopup);
+  console.log(`github : ${isGithubVerified}`);
 
   return (
     <div class="bg-slate-900 w-screen h-screen text-slate-50 pt-32 overflow-hidden font-mono ">
@@ -22,7 +26,7 @@ export const Verify = () => {
         <div class=" w-screen h-full flex flex-col items-center">
             <div class="font-bold text-3xl">Verify Bitches</div>
             <div class="w-full h-full flex flex-row justify-between pl-32 pr-32 pt-12">
-            <GithubAuth/>
+            <GithubAuth handleGithubAuth={setIsGithubVerified}/>
             <IdAuth/>
             <BusinessVerify/>
             </div>
