@@ -4,7 +4,7 @@ import { GitHubAuthPopUp } from './GitHubAuthPopUp'
 // import {ReactComponent as GithubLogo} from "../assets/github.svg "
 import githublogo from "../assets/icons8-github-256.png"
 
-export const GithubAuth = () => {
+export const GithubAuth = (props) => {
   const [popUp, setPopUp] = useState(false)
   const [githubCodeParam, setGithubCodeParam] = useState('')
 
@@ -21,7 +21,7 @@ export const GithubAuth = () => {
     const urlParams = new URLSearchParams(queryString)
     // const codeParam = urlParams.get("code")
     setGithubCodeParam(urlParams?.get("code"))
-    
+    props.handleGithubAuth(true)
   },[])
  
   console.log(githubCodeParam);
