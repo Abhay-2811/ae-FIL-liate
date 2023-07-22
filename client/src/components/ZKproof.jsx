@@ -1,6 +1,6 @@
 import React from 'react'
 import { Navbar } from './Navbar'
-import { Rings } from '@agney/react-loading';
+
 
 export const ZKproof = () => {
 
