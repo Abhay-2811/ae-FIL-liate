@@ -12,6 +12,7 @@ import {
 } from 'snarkyjs';
 
 const app = express();
+app.use(express.json())
 config();
 
 const start = async() => {
@@ -41,8 +42,39 @@ const start = async() => {
     });
     await deployTxn.sign([deployerKey, zkAppPrivateKey]).send();
 
-    const p_state_initial = zkAppInstance.p_state.get();
-    console.log('p-state after init:', p_state_initial.toString());
+    app.get('/states',(req,res)=>{
+      const p_status = zkAppInstance.p_state.get();
+      const p_unconfirmed_status = zkAppInstance.p_unconfirmed_state.get();
+      res.status(200).send(JSON.parse(`{"p_status": ${p_status}, "p_unconfirmed_status": ${p_unconfirmed_status}}`));
+    })
+
+    // need key,gitAge,BizAge in req
+    app.post('/updateOnlyOwner',async(req,res)=>{
+      try {
+        const txn1 = await Mina.transaction(deployerAccount,()=>{
+          zkAppInstance.updateByOwner(Field(req.body.key),Field(req.body.git),Field(req.body.biz));
+        })
+        await txn1.prove();
+        await txn1.sign([deployerKey]).send();
+        res.status(200).send("Unconfirmed state updated")
+      } catch (error) {
+        res.status(500).json({ message: error.message })
+      }
+    })
+
+    app.post('/userUpdateMainState',async (req,res)=>{
+      try {
+        const txn2 = await Mina.transaction(userAccount1,()=>{
+          zkAppInstance.proveByUser(zkAppInstance.p_state.get(),Field(req.body.git),Field(req.body.biz));
+        })
+        await txn2.prove();
+        await txn2.sign([userKey1]).send();
+        
+        res.status(200).send("Final state updated and user is verified !!!")
+      } catch (error) {
+        res.status(500).json({ message: error.message })
+      }
+    })
 }
 
 

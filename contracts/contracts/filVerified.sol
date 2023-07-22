@@ -142,6 +142,12 @@ library Pairing {
 }
 contract filVerification {
 
+    address payable public owner;
+
+    constructor() {
+        owner = payable(msg.sender); 
+    }
+
     using Pairing for *;
 
     struct VerifyingKey {
@@ -234,18 +240,34 @@ contract filVerification {
         }
     }
 
-    address[] public filVerified;
-
-    event verifiedUser(address indexed  user, uint indexed blocknumber, Proof indexed zkProof);
+    struct verifiedBusinesses{
+        address uid;
+        string proofCID;
+        string TypeofBusiness;
+    }
+    
+    mapping(address => verifiedBusinesses) filVerified;
 
     function getFilVerified(uint[2] memory a,
             uint[2][2] memory b,
             uint[2] memory c,
-            uint[1] memory input) public payable{
+            uint[1] memory input, string memory cid, string memory businessType) public payable{
         require(verifyProof(a, b, c, input),"ZK proof not valid");
         require(msg.value >= 1 ether, "Send 1 FIL, use exact value");
-        filVerified.push(msg.sender);
-        emit verifiedUser(msg.sender, block.number, Proof(Pairing.G1Point(a[0],a[1]),Pairing.G2Point(b[0],b[1]),Pairing.G1Point(c[0],c[1])));
+
+        filVerified[msg.sender] = (verifiedBusinesses(msg.sender,cid,businessType));
+
+    }
+
+    function verifiedThruMina(address uid, string memory businessType) public payable{
+        require(msg.sender == owner, "only owner can use this function");
+        require(msg.value == 1 ether, "Send exact base fee");
+        filVerified[msg.sender] = verifiedBusinesses(uid,"Verified thru Mina",businessType);
+    }
+
+    function withdrawFund() public payable{
+        require(payable(msg.sender) == owner, "Only owner can call this function");
+        owner.transfer(address(this).balance);
     }
 
 
