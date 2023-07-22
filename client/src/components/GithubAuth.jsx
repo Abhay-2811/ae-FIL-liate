@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import { GitHubAuthPopUp } from './GitHubAuthPopUp'
 // import {ReactComponent as GithubLogo} from "../assets/github.svg "
@@ -6,6 +6,25 @@ import githublogo from "../assets/icons8-github-256.png"
 
 export const GithubAuth = () => {
   const [popUp, setPopUp] = useState(false)
+  const [githubCodeParam, setGithubCodeParam] = useState('')
+
+  const GITHUB_CLIENT_ID = "675b2b0ff4c699527a21"
+  const REDIRECT_URI = "http://localhost:3000/verify"
+
+  const loginToGithub = () => {
+    localStorage.setItem("loginWith", "GitHub")
+    window.location.assign(`https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${REDIRECT_URI}`)
+   }
+
+  useEffect( () => {
+    const queryString = window.location.search
+    const urlParams = new URLSearchParams(queryString)
+    // const codeParam = urlParams.get("code")
+    setGithubCodeParam(urlParams?.get("code"))
+    
+  },[])
+ 
+  console.log(githubCodeParam);
 
   const togglePopup = () => {
     setPopUp(!popUp);
@@ -23,7 +42,8 @@ export const GithubAuth = () => {
       <input class="w-48 border-2 border-slate-20 hover:bg-white hover:text-slate-900"
       type="button"
       value="Verify GitHub"
-      onClick={togglePopup}
+      onClick={loginToGithub}
+      // onClick={togglePopup}
       />
       {/* <button class="w-48 border-2 border-slate-900 hover:bg-white">Verify ID</button> */}
       {popUp && <GitHubAuthPopUp handleClose={togglePopup}/>}

@@ -5,6 +5,8 @@ import { GithubAuth } from './GithubAuth'
 import { BusinessVerify } from './BusinessVerify'
 import { ProofOption } from './ProofOption'
 
+
+
 export const Verify = () => {
 
   const [generateProofPopup, setGenerateProofPopup] = useState(false)
