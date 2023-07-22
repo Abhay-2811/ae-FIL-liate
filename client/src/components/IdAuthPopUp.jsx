@@ -132,12 +132,13 @@ export const IdAuthPopUp = (props) => {
       {/* <input type="submit" class="w-48 h-10 bg-slate-50 border-2 text-slate-900 font-bold hover:text-slate-50 hover:bg-slate-500" /> */}
       {/* onClick={props.handleClose} */}
       {idCheck ? 
-      <div class="flex flex-col items-center mt-12 gap-4 ">
-        <div class="max-w-m">
+      <div class="flex flex-col items-center mt-12 gap-2 ">
+        <div class="max-w-m ">
         <img src='checked.png'/>
         </div>
-        <p class="mb-8">DocType : {idType}</p>
-        <button  class="w-48 h-10 bg-slate-50 border-2 text-slate-900 font-bold hover:text-slate-50 hover:bg-slate-500" onClick={verifyID}>
+        <p class="mt-4">DocType : {idType}</p>
+        <p >Name : John Cena</p>
+        <button  class="w-48 h-10 bg-slate-50 border-2 text-slate-900 font-bold hover:text-slate-50 hover:bg-slate-500 mt-4" onClick={verifyID}>
         Next
       </button>
       </div>

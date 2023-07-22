@@ -1,14 +1,21 @@
 import React, { useState } from 'react'
+import { Rings } from '@agney/react-loading'
 
 import zkicon from '../assets/argument (1).png'
 import axios from 'axios'
 import { createWalletClient, custom, parseEther } from 'viem'
 import { filecoinCalibration } from 'viem/chains'
 import { abi, address } from '../contract/filVerified'
+import { ZKproof } from './ZKproof'
 
 export const ProofOption = props => {
+
   const gitAcc = 190
   const bizData = 3
+  const [Proof, setProof] = useState()
+  const [loading, setLoading] = useState(false)
+  const [isProofGenerated, setIsProofGenerated] = useState(false)
+  const [isDeployed, setIsDeployed] = useState(false)
 
   const getZkProof = async (git, biz) => {
     let headersList = {
@@ -29,7 +36,6 @@ export const ProofOption = props => {
 
     let response = await axios.request(reqOptions)
     console.log((response.data));
-
     return response.data
   }
 
@@ -54,8 +60,11 @@ export const ProofOption = props => {
 
   const handleClick = async () => {
     try {
+        setLoading(true)
       await getZkProof(gitAcc, bizData).then(async (proof)=>{
         await interactChain(proof);
+        setLoading(false)
+        setIsProofGenerated(true)
       });
 
     } catch (error) {
@@ -67,13 +76,16 @@ export const ProofOption = props => {
 
   return (
     <div class='w-[85vw] h-[79vh] bg-slate-800 border-2 z-10 items-center absolute left-1/8 text-slate-50 flex flex-col p-6 gap-6'>
-      <div class='font-bold text-3xl'>Generate ZK Proof using</div>
-      <button
+    <button
         class='absolute top-4 right-4 font-bold'
         onClick={props.handlePopup}
       >
         X
       </button>
+     { loading ? ( <Rings styles={{"max-width":"20vw"}}/> ) 
+     : ( isProofGenerated ? (<ZKproof/>)
+     :(<>
+        <div class='font-bold text-3xl'>Generate ZK Proof using</div>
       <div class='flex flex-row w-70 h-70 justify-between gap-10'>
         <div class='bg-slate-700 w-full h-full p-10 flex flex-col items-center text-xl justify-between'>
           Using aeFILiate ZK Circuits
@@ -99,6 +111,12 @@ export const ProofOption = props => {
           </button>
         </div>
       </div>
-    </div>
+      </>
+     )
+     
+     ) }
+     
+   
+     </div>
   )
 }

@@ -72,8 +72,6 @@ if(p_unconfirmed_state_change_1 === p_confirmed_state_change_1){
   console.log("User proof generated");
 }
 
-
-
 console.log('Shutting down');
 
 await shutdown();

@@ -1,6 +1,7 @@
 import React from 'react'
 import {Navbar} from './Navbar'
 import { Link } from 'react-router-dom'
+import { Rings } from '@agney/react-loading';
 
 export const Home = () => {
   return (
@@ -11,7 +12,6 @@ export const Home = () => {
             Verify
         </button>
         </Link>
-        
     </div>
   )
 }
