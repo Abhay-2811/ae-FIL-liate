@@ -69,8 +69,14 @@ const start = async() => {
         })
         await txn2.prove();
         await txn2.sign([userKey1]).send();
-        
-        res.status(200).send("Final state updated and user is verified !!!")
+        const p_status = zkAppInstance.p_state.get();
+      const p_unconfirmed_status = zkAppInstance.p_unconfirmed_state.get();
+        if(p_status === p_unconfirmed_status){
+          res.status(200).send("Verified");
+        }
+        else{
+          res.status(500).send("Verification Failed try again !!!")
+        }
       } catch (error) {
         res.status(500).json({ message: error.message })
       }
