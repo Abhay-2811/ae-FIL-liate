@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 
  const users = 
  [
@@ -78,14 +79,12 @@ import React, { useEffect, useState } from 'react'
 
 export const IdAuthPopUp = (props) => {
   const [idType, setIdType] = useState('')
-  const [idFile, setIdFile] = useState(null)
+  const [idFile, setIdFile] = useState('')
   const [idCheck, setIdCheck] = useState(false)
   const [userName, setUserName] = useState('')
   const [idNum, setIdNum] = useState('')
+  const [idVerified, setIdVerified] = useState('')
   // console.log(users[Math.floor(Math.random() * 10)]);
-  console.log(idType)
-  console.log(idFile)
-  console.log(`id check: ${idCheck}`);
 
   const verifyID = (e) => {
     e.preventDefault()
@@ -98,15 +97,53 @@ export const IdAuthPopUp = (props) => {
     setIdCheck(!idCheck)
   }
 
-  const userData = (idFile) => {
-    const rn = Math.floor(Math.random() * 10)
-    setUserName(users[rn])
-    setIdNum(users[rn].idFile)
-    console.log(userName);
-    console.log(idNum);
-  }
+  // const userData = (idFile) => {
+  //   const rn = Math.floor(Math.random() * 10)
+  //   setUserName(users[rn])
+  //   setIdNum(users[rn].idFile)
+  //   console.log(userName);
+  //   console.log(idNum);
+  // }
 
+  const userVerify = async() => {
+    if(idType === "passport_number")
+      setIdNum(users[7].passport_number)
+    if(idType === "driver_license_number")
+      setIdNum(users[7].driver_license_number)
+    if(idType === "pan_number")
+      setIdNum(users[7].pan_number)
+    if(idType === "govt_id_number")
+      setIdNum(users[7].govt_id_number)
+    
+    console.log(idNum);
+    toggleIdCheck()
+  let config = {
+    method: 'post',
+    url: `https://fine-rose-pronghorn-gear.cyclic.app/verifyUser`,
+    headers: {
+      "Content-Type": "application/json"
+     },
+     body:{
+      "name" : "Olivia Patel",
+      "idType": idType,
+      "id_no" : idNum
+     }
+  };
   
+  axios.request(config)
+  .then((response) => {
+    console.log(JSON.stringify(response.data));
+    
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+
+}
+console.log(idNum)
+console.log(idFile)
+console.log(idType)
+console.log(`id check: ${idCheck}`);
 
   return (
     <div class="w-[50vw] h-[70vh] bg-slate-700 z-10 items-center absolute left-1/4 text-slate-50 flex flex-col p-4 gap-4">
@@ -136,13 +173,15 @@ export const IdAuthPopUp = (props) => {
         <div class="max-w-m ">
         <img src='checked.png'/>
         </div>
-        <p class="mt-4">DocType : {idType}</p>
-        <p >Name : John Cena</p>
+       
+        <p>Name : Olivia Patel</p>
+        <div class="mt-4" >{idType} : {idNum}</div>
+        {/* <p> Id Number : {idNum} </p> */}
         <button  class="w-48 h-10 bg-slate-50 border-2 text-slate-900 font-bold hover:text-slate-50 hover:bg-slate-500 mt-4" onClick={verifyID}>
         Next
       </button>
       </div>
-      :<button  class="w-48 h-10 bg-slate-50 border-2 text-slate-900 font-bold hover:text-slate-50 hover:bg-slate-500" onClick={toggleIdCheck}>
+      :<button  class="w-48 h-10 bg-slate-50 border-2 text-slate-900 font-bold hover:text-slate-50 hover:bg-slate-500" onClick={userVerify}>
         Submit
       </button>}
       
