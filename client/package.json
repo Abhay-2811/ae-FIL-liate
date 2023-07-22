@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@agney/react-loading": "^0.1.2",
     "@babel/core": "^7.22.9",
     "@babel/preset-env": "^7.22.9",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",

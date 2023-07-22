@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Rings } from '@agney/react-loading'
 
 import zkicon from '../assets/argument (1).png'
 import axios from 'axios'
@@ -7,9 +8,12 @@ import { filecoinCalibration } from 'viem/chains'
 import { abi, bytecode, address } from '../contract/filVerified'
 
 export const ProofOption = props => {
+
   const gitAcc = 190
   const bizData = 3
   const [Proof, setProof] = useState()
+  const [loading, setLoading] = useState(false)
+  const [isProofGenerated, setIsProofGenerated] = useState(false)
 
   const getZkProof = async (git, biz) => {
     let headersList = {
@@ -66,7 +70,15 @@ export const ProofOption = props => {
 
   return (
     <div class='w-[85vw] h-[79vh] bg-slate-800 border-2 z-10 items-center absolute left-1/8 text-slate-50 flex flex-col p-6 gap-6'>
-      <div class='font-bold text-3xl'>Generate ZK Proof using</div>
+    {loading ? 
+    ( <Rings style={{"max-width":"40vw"}} /> ) 
+    : (
+        isProofGenerated ? (
+            <div>
+                Proof Generated
+            </div>
+        ) : (<>
+            <div class='font-bold text-3xl'>Generate ZK Proof using</div>
       <button
         class='absolute top-4 right-4 font-bold'
         onClick={props.handlePopup}
@@ -98,6 +110,10 @@ export const ProofOption = props => {
           </button>
         </div>
       </div>
+      </>
+        ) 
+    ) }
+      
     </div>
   )
 }

@@ -2,7 +2,20 @@ import React from 'react'
 import { Navbar } from './Navbar'
 import { useAccount, useContract } from 'wagmi'
 import axios from "axios";
-
+import {
+    Audio,
+    BallTriangle,
+    Bars,
+    Circles,
+    Grid,
+    Hearts,
+    Oval,
+    Puff,
+    Rings,
+    SpinningCircles,
+    TailSpin,
+    ThreeDots,
+  } from '@agney/react-loading';
 
 export const ZKproof = () => {
   const gitAcc = 130;
@@ -36,6 +49,7 @@ export const ZKproof = () => {
     <div class="bg-slate-900 w-screen h-screen text-slate-50 pt-32 overflow-hidden  font-mono">
         <Navbar/>
         ZKproof
+        <Oval/>
     </div>
   )
 }
