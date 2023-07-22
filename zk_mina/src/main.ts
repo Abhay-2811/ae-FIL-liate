@@ -69,7 +69,7 @@ const p_confirmed_state_change_1 = zkAppInstance.p_state.get();
 console.log('p-state after txn2:', p_confirmed_state_change_1.toString());
 
 if(p_unconfirmed_state_change_1 === p_confirmed_state_change_1){
-  console.log("User proof generated succesfully");
+  console.log("User proof generated");
 }
 
 
