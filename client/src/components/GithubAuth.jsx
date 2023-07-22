@@ -15,7 +15,7 @@ export const GithubAuth = () => {
   return (
     <div class="flex flex-col justify-center items-center w-80 h-96 border-2 hover:bg-sky-500  p-12">
       <div class="flex flex-col justify-between">
-      GitHubAuth
+      <div class="font-bold text-xl">GitHub Verification</div>
       </div>
       <img src={githublogo}/>
       {/* <GithubLogo style={{color: 'f8fafc'}}/> */}
