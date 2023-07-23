@@ -40,8 +40,8 @@ export const Verify = () => {
             <BusinessVerify handleBusinessAuth={setIsBusinessVerified_s3}/>
             </div>
             {(isGithubVerified_s1 && isIdVerified_s2 && isBusinessVerified_s3) ? 
-            (<button class="w-64 border-2 border-slate-100 hover:bg-white hover:text-slate-900 absolute bottom-12 text-2xl" onClick={toggleZKPopup}>Generate Proof</button>)
-            :(<button class="w-64 disabled:opacity-25 block border-2 border-slate-100 absolute bottom-12 text-2xl">Generate Proof</button>)
+            (<button class="w-64 h-14 border-2 border-slate-100 hover:bg-white hover:text-slate-900 absolute bottom-12 text-2xl" onClick={toggleZKPopup}>Generate Proof</button>)
+            :(<button class="w-64 h-14 disabled:opacity-25 block border-2 border-slate-100 absolute bottom-12 text-2xl">Generate Proof</button>)
             }
             
             {generateProofPopup && <ProofOption handlePopup={toggleZKPopup} ga={gAge}/>}
