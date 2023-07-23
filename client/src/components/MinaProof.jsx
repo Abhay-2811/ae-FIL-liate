@@ -8,6 +8,8 @@ import { privateKeyToAccount } from 'viem/accounts'
 import { filecoinCalibration } from 'viem/chains'
 import { abi, ca_address } from '../contract/filVerified'
 import { useAccount } from 'wagmi'
+import Loader from './Loader'
+import { ZKproof } from './ZKproof'
 
 export const MinaProof = props => {
   const { address } = useAccount()
@@ -19,7 +21,7 @@ export const MinaProof = props => {
     })
 
     const pk = process.env.REACT_APP_PRIVATE_KEY
-    const account = privateKeyToAccount(`${pk}`)
+    const account = privateKeyToAccount(pk)
     await client.writeContract({
       account,
       address: ca_address,
@@ -27,18 +29,24 @@ export const MinaProof = props => {
       functionName: 'verifiedThruMina',
       args: [address, 'gaming'],
       value: parseEther('1')
+    }).then(()=>{
+      setLoading({bool:false,text:''})
+      setProofGenerated(true)
     })
   }
 
   const [progress, setProgress] = useState(0)
   const [git, setGit] = useState(0)
   const [biz, setBiz] = useState(0)
+  const [loading, setLoading] = useState({ bool: false, text: '' })
+  const [proofGenerated, setProofGenerated] = useState(false)
   // state 0 => nothing started yet
   // state 1 => owner completed changing unconfirmed proof and waiting for user to update state from his side
 
   if (progress === 0) {
     const handleClick = async () => {
       try {
+        setLoading({ bool: true, text: 'Updating Unconfirmed state by Admin' })
         let headersList = {
           'Content-Type': 'application/json'
         }
@@ -56,26 +64,37 @@ export const MinaProof = props => {
         }
 
         let response = await axios.request(reqOptions)
-        console.log(response.data)
+        setLoading({ bool: false, text: '' })
+        
         setProgress(1)
       } catch (error) {
         alert(error)
       }
     }
     return (
-      <div class='bg-slate-800 w-[80vw] h-[80vh] text-slate-50 overflow-hidden flex flex-col justify-evenly items-center text-2xl font-mono'>
-        Use Mina Protocol to generate ZK Proofs 
-        <button
-          class='w-64 h-20 border-2 border-slate-100 hover:bg-white hover:text-slate-900 text-2xl'
-          onClick={handleClick}
-        >
-          Begin Proof
-        </button>
-      </div>
+      <>
+        {loading.bool ? (
+          <Loader text={loading.text} />
+        ) :  (
+          <div class='bg-slate-800 w-[80vw] h-[80vh] text-slate-50 overflow-hidden flex flex-col justify-evenly items-center text-2xl font-mono'>
+            Use Mina Protocol to generate ZK Proofs
+            <button
+              class='w-64 h-20 border-2 border-slate-100 hover:bg-white hover:text-slate-900 text-2xl'
+              onClick={handleClick}
+            >
+              Begin Proof
+            </button>
+          </div>
+        )}
+      </>
     )
   } else if (progress === 1) {
+    // const [git, setGit] = useState(0)
+    // const [biz, setBiz] = useState(0)
+
     const handleClick = async () => {
       try {
+        setLoading({ bool: true, text: 'Generating ZK Proof' })
         console.log(git, biz)
         let headersList = {
           'Content-Type': 'application/json'
@@ -96,6 +115,7 @@ export const MinaProof = props => {
         let response = await axios.request(reqOptions)
 
         if (response !== null) {
+          setLoading({ bool: true, text: 'ZK Proof On chain interaction' })
           await chainInteraction()
         } else {
           alert("Invalid data and the proof wasn't verified try again !!!")
@@ -105,37 +125,54 @@ export const MinaProof = props => {
       }
     }
     return (
-      <div class='bg-slate-800 w-[80vw] h-[80vh] text-slate-50 pt-12 overflow-hidden flex flex-col gap-4 items-start text-l font-mono'>
-        Admin Updated the stste Now it's your turn !
-        <label htmlFor='git'>How old is your github account (In days) ?</label>
-        <input class="mt-1 w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 text-sm shadow-sm placeholder-slate-400
-  focus:outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
-          type='number'
-          id='git'
-          onChange={e => {
-            e.preventDefault()
-            setGit(e.target.value)
-          }}
-        />
-        <label htmlFor='biz'>
-          How old is your business from registration as mentioned in document
-          submitted (In months) ?
-        </label>
-        <input class="mt-1 w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 text-sm shadow-sm placeholder-slate-400
-  focus:outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-500"
-          type='number'
-          id='biz'
-          onChange={e => {
-            e.preventDefault()
-            setBiz(e.target.value)
-          }}
-        />
-        <p>
-          Note State is already created using uploaded docs so be precise or the
-          proof will fail....
-        </p>
-        <button class="w-64 h-10 border-2 border-slate-100 hover:bg-white hover:text-slate-900 mt-20 text-xl" onClick={handleClick}>Submit</button>
-      </div>
+      <>
+        {loading.bool ? (
+          <Loader text={loading.text} />
+        ) : proofGenerated ? (
+          <ZKproof />
+        ) : (
+          <div class='bg-slate-800 w-[80vw] h-[80vh] text-slate-50 pt-12 overflow-hidden flex flex-col gap-4 items-start text-l font-mono'>
+            Admin Updated the stste Now it's your turn !
+            <label htmlFor='git'>
+              How old is your github account (In days) ?
+            </label>
+            <input
+              class='mt-1 w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 text-sm shadow-sm placeholder-slate-400
+  focus:outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-500'
+              type='number'
+              id='git'
+              onChange={e => {
+                e.preventDefault()
+                setGit(e.target.value)
+              }}
+            />
+            <label htmlFor='biz'>
+              How old is your business from registration as mentioned in
+              document submitted (In months) ?
+            </label>
+            <input
+              class='mt-1 w-full px-3 py-2 bg-white border border-slate-300 text-slate-900 text-sm shadow-sm placeholder-slate-400
+  focus:outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-500'
+              type='number'
+              id='biz'
+              onChange={e => {
+                e.preventDefault()
+                setBiz(e.target.value)
+              }}
+            />
+            <p>
+              Note State is already created using uploaded docs so be precise or
+              the proof will fail....
+            </p>
+            <button
+              class='w-64 h-10 border-2 border-slate-100 hover:bg-white hover:text-slate-900 mt-20 text-xl'
+              onClick={handleClick}
+            >
+              Submit
+            </button>
+          </div>
+        )}
+      </>
     )
   }
 }

@@ -16,7 +16,7 @@ export const HomeAnimation = () => {
 //   </div>
 <>
 {/* <h1><span>Welcome</span>to<span>ae-FIL-iate</span></h1> */}
-<h1>ae<span>FIL</span>iate</h1>
+<h1>ae<span>FIL</span>liate</h1>
 </>
   )
 }

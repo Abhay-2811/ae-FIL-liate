@@ -125,7 +125,7 @@ export const ProofOption = props => {
           <div class='font-bold text-3xl'>Generate ZK Proof using</div>
           <div class='flex flex-row w-70 h-70 justify-between gap-10'>
             <div class='bg-slate-700 w-full h-full p-10 flex flex-col items-center text-xl justify-between'>
-              Using aeFILiate ZK Circuits
+              Using aeFILliate ZK Circuits
               <div class='max-w-md'>
                 <img src={zkicon} />
               </div>
