@@ -26,7 +26,7 @@ export const FCusers = () => {
                 Collateral Proposal
               </th>
               <th scope='col' class='px-6 py-3'>
-                Deal ID
+                Deal CID
               </th>
             </tr>
           </thead>
