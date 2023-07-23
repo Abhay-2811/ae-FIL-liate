@@ -64,7 +64,7 @@ export const MinaProof = props => {
     }
     return (
       <div class='bg-slate-800 w-[80vw] h-[80vh] text-slate-50 overflow-hidden flex flex-col justify-evenly items-center text-2xl font-mono'>
-        Use Mina Protocol to generate ZK Proofs {props.githubage_mina}
+        Use Mina Protocol to generate ZK Proofs 
         <button
           class='w-64 h-20 border-2 border-slate-100 hover:bg-white hover:text-slate-900 text-2xl'
           onClick={handleClick}
@@ -95,7 +95,7 @@ export const MinaProof = props => {
 
         let response = await axios.request(reqOptions)
 
-        if (response.status === 200) {
+        if (response !== null) {
           await chainInteraction()
         } else {
           alert("Invalid data and the proof wasn't verified try again !!!")
