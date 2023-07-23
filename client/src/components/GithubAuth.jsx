@@ -8,7 +8,7 @@ import axios from "axios"
 export const GithubAuth = (props) => {
   const [popUp, setPopUp] = useState(false)
   const [githubCodeParam, setGithubCodeParam] = useState('')
-  const [bizAge, setBizAge] = useState(0)
+  const [gitAge, setGitAge] = useState(0)
   const [isGitHubVerified, setIsGitHubVerified] = useState(false);
 
   const GITHUB_CLIENT_ID = "675b2b0ff4c699527a21"
@@ -39,7 +39,7 @@ export const GithubAuth = (props) => {
     axios.request(config)
     .then((response) => {
       console.log(JSON.stringify(response.data));
-      setBizAge(response?.data.age)
+      setGitAge(response?.data.age)
       setIsGitHubVerified(response?.data.isVerified)
     })
     .catch((error) => {
@@ -50,11 +50,14 @@ export const GithubAuth = (props) => {
  
   if(isGitHubVerified){
     props.handleGithubAuth(true)
+    props.gitHubAge(gitAge)
   }
 
   const togglePopup = () => {
     setPopUp(!popUp);
   }
+
+  console.log(gitAge);
 
   return (
     <div class="flex flex-col justify-center items-center w-80 h-96 border-2 hover:bg-sky-500  p-12">

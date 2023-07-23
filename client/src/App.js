@@ -8,6 +8,7 @@ import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { filecoinCalibration, filecoin } from 'wagmi/chains'
+import { MinaProof } from './components/MinaProof';
 
 const chains = [filecoinCalibration, filecoin]
 const projectId = '8a78cee3b2628612f1e1854e8798011b'
@@ -28,6 +29,7 @@ function App() {
         <Route path="/" element={<Home/>}/>
         <Route path="/verify" element={<Verify/>}/>
         <Route path="/users" element={<FCusers/>}/>
+        <Route path="/mina" element={<MinaProof/>}/>
       </Routes>
       <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
       </WagmiConfig>

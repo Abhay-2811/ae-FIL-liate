@@ -1,13 +1,15 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 
 import zkicon from '../assets/argument (1).png'
 import axios from 'axios'
 import { createWalletClient, custom, parseEther } from 'viem'
 import { filecoinCalibration } from 'viem/chains'
-import { abi, address } from '../contract/filVerified'
+import { abi, ca_address } from '../contract/filVerified'
 import { ZKproof } from './ZKproof'
 import Loader from './Loader'
 import lighthouse from '@lighthouse-web3/sdk'
+import { Link } from 'react-router-dom'
+import { MinaProof } from './MinaProof'
 
 export const ProofOption = props => {
   const gitAcc = 190
@@ -16,7 +18,7 @@ export const ProofOption = props => {
   const [loading, setLoading] = useState({ bool: false, text: '' })
   const [isProofGenerated, setIsProofGenerated] = useState(false)
   const [isDeployed, setIsDeployed] = useState(false)
-
+  const [minaBool, setMinaBool] = useState(false)
   const apiKey = process.env.REACT_APP_API_KEY
 
   const getZkProof = async (git, biz) => {
@@ -49,14 +51,19 @@ export const ProofOption = props => {
   const interactChain = async proof => {
     const [account] = await walletClient.getAddresses()
     console.log(Proof)
-    await walletClient.writeContract({
-      account,
-      address: address,
-      abi: abi,
-      functionName: 'getFilVerified',
-      args: proof,
-      value: parseEther('1')
-    })
+    await walletClient
+      .writeContract({
+        account,
+        address: ca_address,
+        abi: abi,
+        functionName: 'getFilVerified',
+        args: proof,
+        value: parseEther('1')
+      })
+      .then(() => {
+        setLoading(false)
+        setIsProofGenerated(true)
+      })
   }
 
   const handleClick = async () => {
@@ -82,10 +89,10 @@ export const ProofOption = props => {
           )
           .then(async res => {
             console.log(res)
+            var new_proof = [...proof, res.data.Hash, 'gaming']
+            console.log(new_proof)
             setLoading({ bool: true, text: 'ZK Proof On chain interaction' })
-            await interactChain(proof)
-            setLoading(false)
-            setIsProofGenerated(true)
+            await interactChain(new_proof)
           })
       })
     } catch (error) {
@@ -94,8 +101,13 @@ export const ProofOption = props => {
     }
   }
 
+  const handleMina = () => {
+    setMinaBool(!minaBool)
+  }
+  // console.log(`props ${props.ga}`);
+
   return (
-    <div class='w-[85vw] h-[79vh] bg-slate-800 border-2 z-10 items-center absolute left-1/8 text-slate-50 flex flex-col p-6 gap-6'>
+    <div class='w-[85vw] h-[80vh] bg-slate-800 border-2 z-10 items-center absolute left-1/8 text-slate-50 flex flex-col p-6 gap-6'>
       <button
         class='absolute top-4 right-4 font-bold'
         onClick={props.handlePopup}
@@ -106,6 +118,8 @@ export const ProofOption = props => {
         <Loader text={loading.text} />
       ) : isProofGenerated ? (
         <ZKproof />
+      ) : minaBool ? (
+        <MinaProof githubage_mina={props.ga} />
       ) : (
         <>
           <div class='font-bold text-3xl'>Generate ZK Proof using</div>
@@ -126,9 +140,12 @@ export const ProofOption = props => {
             <div class='bg-slate-700 w-full h-full p-10 flex flex-col items-center text-xl justify-between'>
               Using Mina Protocol
               <div class='max-w-md'>
-                <img src='minaLogo.png' />
+                <img src='minaLogo.png' class='invert' />
               </div>
-              <button class='w-64 border-2 border-slate-20 hover:bg-white hover:text-slate-900'>
+              <button
+                class='w-64 border-2 border-slate-20 hover:bg-white hover:text-slate-900'
+                onClick={handleMina}
+              >
                 {' '}
                 Generate ZK Proof
               </button>
